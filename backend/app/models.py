@@ -24,7 +24,7 @@ class FileItem(Base):
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     owner_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    storage_path = Column(String(512), nullable=False)
+    r2_object_key = Column(String(512), nullable=False)   # e.g. "uploads/<uuid>.enc"
     original_filename = Column(String(255), nullable=False)
     mime_type = Column(String(100), default="application/pdf")
     size = Column(Integer, nullable=False)
