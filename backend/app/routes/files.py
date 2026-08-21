@@ -37,27 +37,51 @@ async def upload_encrypted_file(
             detail="Uploaded file cannot be empty.",
         )
 
-    # Filename validation — PDF only
+    ALLOWED_EXTENSIONS = {
+        ".pdf": "application/pdf",
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".webp": "image/webp",
+        ".gif": "image/gif",
+        ".svg": "image/svg+xml",
+        ".txt": "text/plain",
+        ".md": "text/markdown",
+        ".json": "application/json",
+        ".js": "text/javascript",
+        ".py": "text/x-python",
+        ".html": "text/html",
+        ".css": "text/css",
+        ".csv": "text/csv",
+        ".log": "text/plain",
+    }
+
+    # Filename validation - multi-format support
     clean_filename = os.path.basename(original_filename.strip())
-    if not clean_filename.lower().endswith(".pdf"):
+    ext = os.path.splitext(clean_filename.lower())[1]
+
+    if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only PDF files are accepted.",
+            detail=f"Unsupported file format '{ext}'. Supported formats: PDF, Images (PNG, JPG, WEBP, GIF, SVG), Text/Code (TXT, MD, JSON, JS, PY, HTML, CSS, CSV, LOG)."
         )
 
-    # Upload ciphertext to R2
-    object_key = generate_object_key()
-    upload_file(object_key, contents)
+    mime_type = ALLOWED_EXTENSIONS[ext]
+
+    # Generate non-predictable physical storage filename
+    storage_filename = f"{uuid.uuid4().hex}.enc"
+    storage_path = os.path.join(STORAGE_DIR, storage_filename)
 
     # Persist metadata to Postgres
     file_record = FileItem(
         owner_id=current_user.id,
         r2_object_key=object_key,
         original_filename=clean_filename,
-        mime_type="application/pdf",
+        mime_type=mime_type,
         size=file_size,
         iv_hex=iv_hex.strip(),
     )
+
 
     db.add(file_record)
     db.commit()

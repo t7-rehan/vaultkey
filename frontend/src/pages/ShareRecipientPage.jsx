@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Shield, FileText, Lock, Clock, Hash, Download, CheckCircle2, AlertCircle, Eye, EyeOff, X } from 'lucide-react';
+import { Shield, FileText, Lock, Clock, Hash, Download, CheckCircle2, AlertCircle, Eye, EyeOff, X, Image as ImageIcon, Code } from 'lucide-react';
 import { checkRecipientAccess, downloadEncryptedFile } from '../services/accessService';
 import { extractKeyFromFragment } from '../crypto/keyManager';
 import { decryptFile } from '../crypto/decrypt';
 import { Button } from '../components/common/Button';
 import { ErrorState } from '../components/common/ErrorState';
 import { StatusBadge } from '../components/common/StatusBadge';
+import { WatermarkOverlay } from '../components/common/WatermarkOverlay';
 
 export function ShareRecipientPage() {
   const { token } = useParams();
@@ -18,6 +19,8 @@ export function ShareRecipientPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [viewBlobUrl, setViewBlobUrl] = useState(null);
   const [showViewer, setShowViewer] = useState(false);
+  const [fileFormat, setFileFormat] = useState('pdf'); // 'pdf' | 'image' | 'text'
+  const [textContent, setTextContent] = useState('');
 
   const fetchAccessState = async () => {
     setLoading(true);
@@ -39,6 +42,21 @@ export function ShareRecipientPage() {
     }
   }, [token]);
 
+  // Anti-leak print shortcut blocker (Ctrl+P / Cmd+P)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+        if (showViewer) {
+          e.preventDefault();
+          e.stopPropagation();
+          alert("🔒 Printing is disabled in View-Only Mode to prevent document leaks.");
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+  }, [showViewer]);
+
   const handleAccessAndDownload = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -58,6 +76,20 @@ export function ShareRecipientPage() {
 
       // 2. Decrypt locally in browser using Web Crypto API
       const decryptedBlob = await decryptFile(arrayBuffer, ivHex, keyHex);
+
+      const fname = (originalFilename || accessData?.original_filename || '').toLowerCase();
+      const isImg = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'].some(ext => fname.endsWith(ext));
+      const isTxt = ['.txt', '.md', '.json', '.js', '.py', '.html', '.css', '.csv', '.log'].some(ext => fname.endsWith(ext));
+
+      if (isTxt) {
+        const text = await decryptedBlob.text();
+        setTextContent(text);
+        setFileFormat('text');
+      } else if (isImg) {
+        setFileFormat('image');
+      } else {
+        setFileFormat('pdf');
+      }
 
       // 3. Handle View-Only vs Download
       if (accessData?.max_downloads === 0) {
@@ -162,10 +194,14 @@ export function ShareRecipientPage() {
 
   return (
     <div className="min-h-screen bg-[#F7F9FC] dark:bg-[#080D18] flex flex-col justify-center items-center p-4">
-      {/* View-Only Secure In-Browser Document Viewer Modal */}
-      {showViewer && viewBlobUrl && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex flex-col p-4 md:p-6 animate-fade-in">
-          <div className="flex items-center justify-between bg-surface-dark border border-[#253044] px-5 py-3.5 rounded-xl mb-4 text-white">
+      {/* View-Only Secure Multi-Format In-Browser Viewer Modal with Dynamic Watermark */}
+      {showViewer && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex flex-col p-4 md:p-6 animate-fade-in select-none"
+          onContextMenu={(e) => e.preventDefault()}
+          onDragStart={(e) => e.preventDefault()}
+        >
+          <div className="flex items-center justify-between bg-surface-dark border border-[#253044] px-5 py-3.5 rounded-xl mb-4 text-white z-40">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
                 <EyeOff className="w-5 h-5" />
@@ -175,7 +211,7 @@ export function ShareRecipientPage() {
                   {accessData.original_filename}
                 </h3>
                 <p className="text-xs text-amber-400 font-medium flex items-center gap-1.5">
-                  <span>🔒 View-Only Mode — Local download & save disabled</span>
+                  <span>🔒 View-Only Mode — Anti-Leak Watermark Active · Local Save Disabled</span>
                 </p>
               </div>
             </div>
@@ -188,17 +224,39 @@ export function ShareRecipientPage() {
           </div>
 
           <div
-            className="flex-1 w-full bg-surface-darkSecondary border border-[#253044] rounded-2xl overflow-hidden shadow-2xl relative"
+            className="flex-1 w-full bg-surface-darkSecondary border border-[#253044] rounded-2xl overflow-hidden shadow-2xl relative flex items-center justify-center p-4"
             onContextMenu={(e) => e.preventDefault()}
           >
-            <iframe
-              src={`${viewBlobUrl}#toolbar=0&navpanes=0`}
-              title="Secure View Only Document"
-              className="w-full h-full border-0 select-none"
-            />
+            {/* Dynamic Anti-Leak Watermark Overlay */}
+            <WatermarkOverlay timestamp={accessData.expires_at} />
+
+            {/* Content Renderer by Format */}
+            {fileFormat === 'image' && viewBlobUrl && (
+              <img
+                src={viewBlobUrl}
+                alt="Secure View"
+                className="max-h-full max-w-full object-contain rounded-lg select-none pointer-events-none z-10"
+                onContextMenu={(e) => e.preventDefault()}
+              />
+            )}
+
+            {fileFormat === 'text' && (
+              <div className="w-full h-full overflow-auto bg-surface-dark/80 p-6 rounded-xl text-emerald-400 font-mono text-xs z-10 select-none border border-[#253044]">
+                <pre className="whitespace-pre-wrap font-mono">{textContent}</pre>
+              </div>
+            )}
+
+            {fileFormat === 'pdf' && viewBlobUrl && (
+              <iframe
+                src={`${viewBlobUrl}#toolbar=0&navpanes=0`}
+                title="Secure View Only Document"
+                className="w-full h-full border-0 select-none z-10"
+              />
+            )}
           </div>
         </div>
       )}
+
 
       <div className="w-full max-w-md bg-white dark:bg-surface-dark border border-[#E6EAF0] dark:border-[#253044] rounded-2xl p-8 shadow-xl">
         {/* Brand Header */}
