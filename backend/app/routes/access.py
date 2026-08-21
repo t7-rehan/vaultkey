@@ -95,7 +95,7 @@ def check_recipient_access(
             status="EXPIRED"
         )
 
-    if share.download_count >= share.max_downloads:
+    if share.max_downloads > 0 and share.download_count >= share.max_downloads:
         db.add(AccessLog(
             share_id=share.id,
             file_id=share.file_id,
@@ -163,8 +163,9 @@ def authorize_password(
     if share.expires_at and share.expires_at < datetime.utcnow():
         raise HTTPException(status_code=status.HTTP_410_GONE, detail="Link expired")
 
-    if share.download_count >= share.max_downloads:
+    if share.max_downloads > 0 and share.download_count >= share.max_downloads:
         raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Download limit reached")
+
 
     if share.password_hash:
         if not payload.password or not verify_password(payload.password.strip(), share.password_hash):
@@ -234,42 +235,56 @@ def download_encrypted_file(
                 detail="Unable to authorize access with the provided password."
             )
 
-    # Atomic download counter update to prevent concurrent limit bypass
-    rows_updated = db.query(ShareLink).filter(
-        ShareLink.id == share.id,
-        ShareLink.download_count < ShareLink.max_downloads,
-        ShareLink.revoked == False
-    ).update({"download_count": ShareLink.download_count + 1})
+    if share.max_downloads > 0:
+        # Atomic download counter update to prevent concurrent limit bypass
+        rows_updated = db.query(ShareLink).filter(
+            ShareLink.id == share.id,
+            ShareLink.download_count < ShareLink.max_downloads,
+            ShareLink.revoked == False
+        ).update({"download_count": ShareLink.download_count + 1})
 
-    if rows_updated == 0:
+        if rows_updated == 0:
+            db.add(AccessLog(
+                share_id=share.id,
+                file_id=share.file_id,
+                owner_id=share.owner_id,
+                event="ACCESS_DENIED",
+                status="DENIED",
+                user_agent=user_agent,
+                ip_address=client_ip
+            ))
+            db.commit()
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="The maximum number of downloads for this file has been reached."
+            )
+
+        db.commit()
+
+        # Log download event
         db.add(AccessLog(
             share_id=share.id,
             file_id=share.file_id,
             owner_id=share.owner_id,
-            event="ACCESS_DENIED",
-            status="DENIED",
+            event="FILE_DOWNLOADED",
+            status="SUCCESS",
             user_agent=user_agent,
             ip_address=client_ip
         ))
         db.commit()
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="The maximum number of downloads for this file has been reached."
-        )
+    else:
+        # Log view-only access event
+        db.add(AccessLog(
+            share_id=share.id,
+            file_id=share.file_id,
+            owner_id=share.owner_id,
+            event="FILE_VIEWED",
+            status="SUCCESS",
+            user_agent=user_agent,
+            ip_address=client_ip
+        ))
+        db.commit()
 
-    db.commit()
-
-    # Log download event
-    db.add(AccessLog(
-        share_id=share.id,
-        file_id=share.file_id,
-        owner_id=share.owner_id,
-        event="FILE_DOWNLOADED",
-        status="SUCCESS",
-        user_agent=user_agent,
-        ip_address=client_ip
-    ))
-    db.commit()
 
     # Fetch file record
     file_item = db.query(FileItem).filter(FileItem.id == share.file_id).first()

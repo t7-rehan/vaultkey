@@ -35,8 +35,10 @@ def get_security_activity(
             event=log.event,
             status=log.status,
             user_agent=log.user_agent,
+            ip_address=log.ip_address,
             timestamp=log.timestamp
         )
+
         result.append(res)
 
     return result

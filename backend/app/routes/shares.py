@@ -100,8 +100,11 @@ def list_user_shares(
             status_str = "REVOKED"
         elif s.expires_at and s.expires_at < now:
             status_str = "EXPIRED"
-        elif s.download_count >= s.max_downloads:
+        elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
             status_str = "LIMIT_REACHED"
+        elif s.max_downloads == 0:
+            status_str = "VIEW_ONLY"
+
 
         item = ShareDetailResponse(
             id=s.id,
@@ -143,8 +146,11 @@ def get_share_detail(
         status_str = "REVOKED"
     elif s.expires_at and s.expires_at < now:
         status_str = "EXPIRED"
-    elif s.download_count >= s.max_downloads:
+    elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
         status_str = "LIMIT_REACHED"
+    elif s.max_downloads == 0:
+        status_str = "VIEW_ONLY"
+
 
     return ShareDetailResponse(
         id=s.id,

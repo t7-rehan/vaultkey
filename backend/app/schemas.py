@@ -53,7 +53,8 @@ class FileResponse(BaseModel):
 class ShareCreateRequest(BaseModel):
     file_id: str
     expiration_hours: Optional[int] = None # None, 1, 6, 24, 72 (3 days), 168 (7 days)
-    max_downloads: int = Field(5, ge=1, le=10)
+    max_downloads: int = Field(5, ge=0, le=10)
+
     password: Optional[str] = None
 
 class ShareCreateResponse(BaseModel):
@@ -105,7 +106,9 @@ class ActivityLogResponse(BaseModel):
     event: str
     status: str
     user_agent: Optional[str]
+    ip_address: Optional[str] = None
     timestamp: datetime
 
     class Config:
         from_attributes = True
+

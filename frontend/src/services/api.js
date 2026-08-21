@@ -2,7 +2,8 @@
  * API Request Helper for VaultKey
  */
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+
 
 export async function request(endpoint, options = {}) {
   const token = localStorage.getItem('vaultkey_token');

@@ -9,7 +9,9 @@ import { StatusBadge } from '../components/common/StatusBadge';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 import { CreateShareModal } from '../components/shares/CreateShareModal';
 import { ShareSuccessModal } from '../components/shares/ShareSuccessModal';
+import { parseUserAgent, formatIpAddress } from '../utils/useragentParser';
 import { ArrowLeft, FileText, Shield, Clock, Hash, Lock, Activity, CheckCircle2, XCircle, AlertTriangle, ShieldX, Link2 } from 'lucide-react';
+
 
 export function FileDetailPage() {
   const { id } = useParams();
@@ -201,32 +203,43 @@ export function FileDetailPage() {
             </div>
           ) : (
             <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#E6EAF0] dark:before:bg-[#253044]">
-              {activities.map((act) => (
-                <div key={act.id} className="relative flex items-start justify-between text-xs">
-                  <div className="absolute -left-6 top-0.5 bg-white dark:bg-surface-dark p-0.5">
-                    {getEventIcon(act.event, act.status)}
-                  </div>
-                  <div>
-                    <span className="font-bold text-gray-900 dark:text-white font-mono">
-                      {act.event}
+              {activities.map((act) => {
+                const parsedUA = parseUserAgent(act.user_agent);
+                const formattedIp = formatIpAddress(act.ip_address);
+                return (
+                  <div key={act.id} className="relative flex items-start justify-between text-xs gap-4">
+                    <div className="absolute -left-6 top-0.5 bg-white dark:bg-surface-dark p-0.5">
+                      {getEventIcon(act.event, act.status)}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-gray-900 dark:text-white font-mono">
+                          {act.event}
+                        </span>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500 font-mono">
+                          ({act.status})
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+                        {act.user_agent && (
+                          <span>💻 {parsedUA.full}</span>
+                        )}
+                        <span>🌐 {formattedIp}</span>
+                      </div>
+                    </div>
+                    <span className="text-gray-400 dark:text-gray-500 text-[11px] shrink-0 font-medium">
+                      {new Date(act.timestamp).toLocaleString(undefined, {
+                        dateStyle: 'short',
+                        timeStyle: 'short'
+                      })}
                     </span>
-                    <span className="text-gray-500 dark:text-gray-400 ml-2">
-                      ({act.status})
-                    </span>
-                    {act.user_agent && (
-                      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 truncate max-w-md">
-                        {act.user_agent}
-                      </p>
-                    )}
                   </div>
-                  <span className="text-gray-400 dark:text-gray-500 text-[11px]">
-                    {new Date(act.timestamp).toLocaleString()}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
+
       </div>
 
       {shareFileTarget && (

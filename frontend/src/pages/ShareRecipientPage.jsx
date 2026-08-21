@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Shield, FileText, Lock, Clock, Hash, Download, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Shield, FileText, Lock, Clock, Hash, Download, CheckCircle2, AlertCircle, Eye, EyeOff, X } from 'lucide-react';
 import { checkRecipientAccess, downloadEncryptedFile } from '../services/accessService';
 import { extractKeyFromFragment } from '../crypto/keyManager';
 import { decryptFile } from '../crypto/decrypt';
@@ -16,6 +16,8 @@ export function ShareRecipientPage() {
   const [downloading, setDownloading] = useState(false);
   const [downloadComplete, setDownloadComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [viewBlobUrl, setViewBlobUrl] = useState(null);
+  const [showViewer, setShowViewer] = useState(false);
 
   const fetchAccessState = async () => {
     setLoading(true);
@@ -51,23 +53,31 @@ export function ShareRecipientPage() {
     setDownloading(true);
 
     try {
-      // 1. Fetch ciphertext from backend (server-side authorization & download limit check)
+      // 1. Fetch ciphertext from backend (server-side authorization)
       const { arrayBuffer, ivHex, originalFilename } = await downloadEncryptedFile(token, password);
 
       // 2. Decrypt locally in browser using Web Crypto API
       const decryptedBlob = await decryptFile(arrayBuffer, ivHex, keyHex);
 
-      // 3. Trigger native browser file download
-      const blobUrl = URL.createObjectURL(decryptedBlob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = originalFilename || 'document.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
+      // 3. Handle View-Only vs Download
+      if (accessData?.max_downloads === 0) {
+        // View-only mode: Render inside browser viewer without triggering save-to-disk
+        const blobUrl = URL.createObjectURL(decryptedBlob);
+        setViewBlobUrl(blobUrl);
+        setShowViewer(true);
+      } else {
+        // Standard mode: Trigger browser download
+        const blobUrl = URL.createObjectURL(decryptedBlob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = originalFilename || 'document.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+        setDownloadComplete(true);
+      }
 
-      setDownloadComplete(true);
       fetchAccessState(); // Refresh remaining counter
     } catch (err) {
       console.error("Recipient download error:", err);
@@ -75,6 +85,14 @@ export function ShareRecipientPage() {
     } finally {
       setDownloading(false);
     }
+  };
+
+  const handleCloseViewer = () => {
+    if (viewBlobUrl) {
+      URL.revokeObjectURL(viewBlobUrl);
+      setViewBlobUrl(null);
+    }
+    setShowViewer(false);
   };
 
   if (loading) {
@@ -140,8 +158,48 @@ export function ShareRecipientPage() {
     );
   }
 
+  const isViewOnly = accessData.max_downloads === 0;
+
   return (
     <div className="min-h-screen bg-[#F7F9FC] dark:bg-[#080D18] flex flex-col justify-center items-center p-4">
+      {/* View-Only Secure In-Browser Document Viewer Modal */}
+      {showViewer && viewBlobUrl && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex flex-col p-4 md:p-6 animate-fade-in">
+          <div className="flex items-center justify-between bg-surface-dark border border-[#253044] px-5 py-3.5 rounded-xl mb-4 text-white">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
+                <EyeOff className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm text-white">
+                  {accessData.original_filename}
+                </h3>
+                <p className="text-xs text-amber-400 font-medium flex items-center gap-1.5">
+                  <span>🔒 View-Only Mode — Local download & save disabled</span>
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleCloseViewer}
+              className="p-2 bg-surface-darkSecondary hover:bg-gray-800 rounded-xl text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div
+            className="flex-1 w-full bg-surface-darkSecondary border border-[#253044] rounded-2xl overflow-hidden shadow-2xl relative"
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            <iframe
+              src={`${viewBlobUrl}#toolbar=0&navpanes=0`}
+              title="Secure View Only Document"
+              className="w-full h-full border-0 select-none"
+            />
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-md bg-white dark:bg-surface-dark border border-[#E6EAF0] dark:border-[#253044] rounded-2xl p-8 shadow-xl">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-6">
@@ -152,7 +210,7 @@ export function ShareRecipientPage() {
             Secure File Available
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Client-side encrypted payload ready for retrieval.
+            {isViewOnly ? 'Client-side encrypted payload ready for in-browser view.' : 'Client-side encrypted payload ready for retrieval.'}
           </p>
         </div>
 
@@ -182,10 +240,18 @@ export function ShareRecipientPage() {
 
             <div className="flex items-center gap-1.5">
               <Hash className="w-3.5 h-3.5 text-gray-400" />
-              <span>Downloads remaining: {accessData.downloads_remaining}</span>
+              <span>{isViewOnly ? 'View Only (0 Downloads)' : `Downloads left: ${accessData.downloads_remaining}`}</span>
             </div>
           </div>
         </div>
+
+        {/* View Only Security Banner */}
+        {isViewOnly && (
+          <div className="p-3 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 rounded-xl text-xs border border-amber-200 dark:border-amber-800/50 mb-4 flex items-center gap-2">
+            <EyeOff className="w-4 h-4 shrink-0 text-amber-500" />
+            <span>🔒 <strong>View-Only Mode Enabled</strong>: You can read this document inside your browser window, but local saving and downloading are disabled.</span>
+          </div>
+        )}
 
         {/* Error message if any */}
         {errorMsg && (
@@ -195,7 +261,7 @@ export function ShareRecipientPage() {
           </div>
         )}
 
-        {/* Download Form */}
+        {/* Download / View Form */}
         <form onSubmit={handleAccessAndDownload} className="space-y-4">
           {accessData.requires_password && (
             <div>
@@ -219,9 +285,9 @@ export function ShareRecipientPage() {
             variant="primary"
             className="w-full"
             loading={downloading}
-            icon={downloadComplete ? CheckCircle2 : Download}
+            icon={isViewOnly ? Eye : (downloadComplete ? CheckCircle2 : Download)}
           >
-            {downloadComplete ? 'DOWNLOAD AGAIN' : 'ACCESS FILE'}
+            {isViewOnly ? 'VIEW DOCUMENT IN BROWSER' : (downloadComplete ? 'DOWNLOAD AGAIN' : 'ACCESS FILE')}
           </Button>
         </form>
 
@@ -235,3 +301,4 @@ export function ShareRecipientPage() {
     </div>
   );
 }
+

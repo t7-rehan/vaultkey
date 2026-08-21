@@ -100,16 +100,23 @@ export function CreateShareModal({ isOpen, onClose, fileItem, keyHex, onShareCre
           </label>
           <input
             type="number"
-            min={1}
+            min={0}
             max={10}
             value={maxDownloads}
-            onChange={(e) => setMaxDownloads(Math.min(10, Math.max(1, Number(e.target.value))))}
+            onChange={(e) => setMaxDownloads(Math.min(10, Math.max(0, Number(e.target.value))))}
             className="w-full px-3.5 py-2 text-sm bg-white dark:bg-surface-dark border border-[#E6EAF0] dark:border-[#253044] rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
           <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
-            Server enforces atomic counter protection up to 10 downloads.
+            {maxDownloads === 0 ? (
+              <span className="text-amber-600 dark:text-amber-400 font-medium">
+                🔒 View-Only Mode: Recipient can view document inside browser, local file download is disabled.
+              </span>
+            ) : (
+              'Server enforces atomic counter protection up to 10 downloads. Set to 0 for View-Only mode.'
+            )}
           </p>
         </div>
+
 
         {/* Password Protection Toggle */}
         <div className="pt-2 border-t border-[#E6EAF0] dark:border-[#253044]">
