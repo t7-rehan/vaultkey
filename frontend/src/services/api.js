@@ -1,12 +1,24 @@
 /**
  * API Request Helper for VaultKey
+ *
+ * Attaches a fresh Firebase ID token as Authorization: Bearer <token> on every
+ * request when a Firebase user is signed in. When no user is signed in, the
+ * request is sent without an Authorization header (for public endpoints such as
+ * /share/:token).
+ *
+ * getIdToken() automatically refreshes the token when it is near expiry —
+ * no custom refresh logic is needed here.
  */
+import { auth } from '../config/firebase';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 
 export async function request(endpoint, options = {}) {
-  const token = localStorage.getItem('vaultkey_token');
+  let token = null;
+  if (auth.currentUser) {
+    token = await auth.currentUser.getIdToken();
+  }
 
   const headers = {
     ...options.headers,

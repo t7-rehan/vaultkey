@@ -3,26 +3,14 @@ from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
 
 # Auth Schemas
-class UserRegister(BaseModel):
-    email: EmailStr
-    password: str = Field(..., min_length=6)
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
 class UserResponse(BaseModel):
     id: str
-    email: str
+    email: Optional[str] = None
+    updated_at: Optional[datetime] = None
     created_at: datetime
 
     class Config:
         from_attributes = True
-
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    user: UserResponse
 
 # File Schemas
 class FileCreateResponse(BaseModel):
@@ -111,4 +99,3 @@ class ActivityLogResponse(BaseModel):
 
     class Config:
         from_attributes = True
-

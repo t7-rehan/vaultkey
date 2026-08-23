@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { FilesPage } from './pages/FilesPage';
 import { FileDetailPage } from './pages/FileDetailPage';
@@ -65,6 +66,14 @@ export function App() {
             element={
               <PublicAuthRoute>
                 <RegisterPage />
+              </PublicAuthRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <PublicAuthRoute>
+                <ForgotPasswordPage />
               </PublicAuthRoute>
             }
           />

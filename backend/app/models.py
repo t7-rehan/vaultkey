@@ -11,9 +11,11 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
-    email = Column(String(255), unique=True, nullable=False, index=True)
-    hashed_password = Column(String(255), nullable=False)
+    email = Column(String(255), unique=True, nullable=True, index=True)          # nullable for Google-only accounts
+    firebase_uid = Column(String(128), unique=True, nullable=True, index=True)   # NEW: Firebase identity bridge
+    hashed_password = Column(String(255), nullable=True)                          # nullable for Firebase-only users
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=True, onupdate=datetime.utcnow)       # NEW
 
     files = relationship("FileItem", back_populates="owner", cascade="all, delete-orphan")
     shares = relationship("ShareLink", back_populates="owner", cascade="all, delete-orphan")

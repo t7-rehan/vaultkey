@@ -1,0 +1,344 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Add `firebase-admin` to `backend/requirements.txt`": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348681670
+      },
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348696417
+      },
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348724448
+      }
+    ],
+    "2.1 Write property test for `_get_app()` missing-env-var behaviour": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348681858
+      },
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348731270
+      }
+    ],
+    "2.2 Write property test for `verify_firebase_token` claims pass-through": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348681960
+      },
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348731887
+      }
+    ],
+    "3.1 Write unit test — model nullable fields accepted": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682067
+      },
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348732591
+      }
+    ],
+    "4. Update `backend/app/schemas.py` — make `email` optional in `UserResponse`; remove dead schemas": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682172
+      },
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348733440
+      }
+    ],
+    "5.1 Write property test — invalid tokens always return HTTP 401": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682283
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787369932273
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370732965
+      }
+    ],
+    "5.2 Write property test — existing user returned without duplication": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682391
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787369935271
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370733732
+      }
+    ],
+    "5.3 Write property test — new user provisioned with correct fields": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682573
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787369935773
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370734383
+      }
+    ],
+    "5.4 Write property test — all authenticated requests return user with UUID id": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682684
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787369935980
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370735211
+      }
+    ],
+    "5.5 Write property tests — `hash_share_token` and `generate_secure_token` preserved": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682790
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787369936600
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370736177
+      }
+    ],
+    "6.1 Write unit tests — removed routes and preserved `/me`": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682895
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370765823
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370960687
+      }
+    ],
+    "7. Update `backend/.env.example` with Firebase Admin variables": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348682993
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370766635
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370961650
+      }
+    ],
+    "8. Checkpoint — backend is fully operational with Firebase auth": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683094
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370985444
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371307439
+      }
+    ],
+    "9. Install the `firebase` npm package in the frontend": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683256
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371340980
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371391367
+      }
+    ],
+    "10.1 Write unit test — missing env vars trigger `console.error`": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683390
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371583080
+      }
+    ],
+    "11. Update `frontend/.env.example` with `VITE_FIREBASE_*` variables": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683495
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371557380
+      }
+    ],
+    "12.1 Write property test — `Authorization` header set iff `currentUser` is non-null": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683600
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371587842
+      }
+    ],
+    "13. Replace `frontend/src/services/authService.js` — remove login/register/logout wrappers; keep `getCurrentUser`": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683706
+      }
+    ],
+    "14.1 Write property test — `onAuthStateChanged` controls `isAuthenticated` and `loading`": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683817
+      }
+    ],
+    "14.2 Write property test — Firebase auth errors propagate from `login` and `register`": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348683942
+      }
+    ],
+    "15.1 Write unit test — `ForgotPasswordPage` renders and shows success message": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348684044
+      }
+    ],
+    "16. Add `/forgot-password` route to `frontend/src/App.jsx`": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348684160
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371584282
+      }
+    ],
+    "17.1 Write unit tests — `LoginPage` renders new elements": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348684267
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371585316
+      }
+    ],
+    "18.1 Write unit test — `RegisterPage` renders Google Sign-In button": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348684391
+      },
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787371586302
+      }
+    ],
+    "19. Checkpoint — full end-to-end auth flow verification": [
+      {
+        "executionId": "7bb5f1ff-21c9-45d9-8c07-3b1253241a30",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787348684573
+      }
+    ],
+    "5. Replace `get_current_user()` in `backend/app/security.py` with Firebase token verification; remove JWT/password helpers": [
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370736321
+      }
+    ],
+    "6. Remove `POST /register` and `POST /login` from `backend/app/routes/auth.py`; clean up imports": [
+      {
+        "executionId": "6f6ee808-64ab-435d-aac9-1d498467d095",
+        "chatSessionId": "sess_2e9bddf6-9d1f-4c4b-b0a1-a8bd1ebcd75e",
+        "timestamp": 1787370960812
+      }
+    ]
+  }
+}

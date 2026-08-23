@@ -1,5 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser, loginUser, registerUser, logoutUser } from '../services/authService';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+} from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 const AuthContext = createContext(null);
 
@@ -10,8 +20,8 @@ export function AuthProvider({ children }) {
     return localStorage.getItem('vaultkey_theme') === 'dark';
   });
 
+  // Dark mode effect — uses localStorage for vaultkey_theme only (not auth)
   useEffect(() => {
-    // Apply dark mode class to root html element
     if (darkMode) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('vaultkey_theme', 'dark');
@@ -22,39 +32,46 @@ export function AuthProvider({ children }) {
   }, [darkMode]);
 
   const toggleDarkMode = () => {
-    setDarkMode(prev => !prev);
+    setDarkMode((prev) => !prev);
   };
 
+  // Subscribe to Firebase auth state — single source of truth for isAuthenticated
   useEffect(() => {
-    const token = localStorage.getItem('vaultkey_token');
-    if (token) {
-      getCurrentUser()
-        .then(u => setUser(u))
-        .catch(() => {
-          logoutUser();
-          setUser(null);
-        })
-        .finally(() => setLoading(false));
-    } else {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
       setLoading(false);
-    }
+    });
+    return unsubscribe; // cleans up listener on unmount
   }, []);
 
-  const login = async (email, password) => {
-    const res = await loginUser(email, password);
-    setUser(res.user);
-    return res;
+  // Email / password sign-in — propagates Firebase errors to the caller
+  const login = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const register = async (email, password) => {
-    const res = await registerUser(email, password);
-    setUser(res.user);
-    return res;
+  // Email / password registration — propagates Firebase errors to the caller
+  const register = (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
   };
 
+  // Sign-out
   const logout = () => {
-    logoutUser();
-    setUser(null);
+    return signOut(auth);
+  };
+
+  // Google Sign-In via popup — propagates Firebase errors to the caller
+  const loginWithGoogle = () => {
+    return signInWithPopup(auth, new GoogleAuthProvider());
+  };
+
+  // Send email verification to the currently signed-in user
+  const sendVerificationEmail = () => {
+    return sendEmailVerification(auth.currentUser);
+  };
+
+  // Send password-reset email; never reveals whether the address is registered
+  const sendPasswordReset = (email) => {
+    return sendPasswordResetEmail(auth, email);
   };
 
   return (
@@ -62,12 +79,15 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
-        darkMode,
-        toggleDarkMode,
+        isAuthenticated: !!user,
         login,
         register,
         logout,
-        isAuthenticated: !!user,
+        loginWithGoogle,
+        sendVerificationEmail,
+        sendPasswordReset,
+        darkMode,
+        toggleDarkMode,
       }}
     >
       {children}
