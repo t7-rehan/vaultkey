@@ -40,8 +40,9 @@ htmlcov/
 *.sqlite
 *.sqlite3
 
-# ── Uploaded / encrypted files ───────────────────────────────
-backend/storage/uploads/
+# ── Local SQLite remnants (no longer used in production) ─────
+backend/vaultkey.db
+backend/storage/
 
 # ── Node / Frontend ──────────────────────────────────────────
 node_modules/
@@ -59,3 +60,4 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+overview.md 

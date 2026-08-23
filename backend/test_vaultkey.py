@@ -7,6 +7,7 @@ from unittest.mock import patch, MagicMock
 os.environ.setdefault("FIREBASE_PROJECT_ID", "test-project")
 os.environ.setdefault("FIREBASE_CLIENT_EMAIL", "test@test.iam.gserviceaccount.com")
 os.environ.setdefault("FIREBASE_PRIVATE_KEY", "test-key")
+os.environ.setdefault("DATABASE_URL", "sqlite:///./vaultkey.db")
 
 with patch("firebase_admin.initialize_app", return_value=MagicMock()):
     from fastapi.testclient import TestClient
@@ -14,9 +15,25 @@ with patch("firebase_admin.initialize_app", return_value=MagicMock()):
 
 client = TestClient(app)
 
+# In-memory storage mock for tests
+_mock_storage = {}
+
+def _mock_upload(key: str, data: bytes, content_type: str = "application/octet-stream"):
+    _mock_storage[key] = data
+
+def _mock_download(key: str) -> bytes:
+    return _mock_storage.get(key, b"")
+
+def _mock_delete(key: str):
+    _mock_storage.pop(key, None)
+
+
 class TestVaultKeySecurityWorkflow(unittest.TestCase):
 
-    def test_full_security_journey(self):
+    @patch("app.routes.files.upload_file", side_effect=_mock_upload)
+    @patch("app.routes.access.download_file", side_effect=_mock_download)
+    @patch("app.routes.files.delete_file", side_effect=_mock_delete)
+    def test_full_security_journey(self, mock_del, mock_dl, mock_up):
         print("\n--- Starting End-to-End VaultKey Security Test ---")
 
         # Mock Firebase decoded claims for test user
@@ -56,7 +73,7 @@ class TestVaultKeySecurityWorkflow(unittest.TestCase):
             }
             bad_upload_res = client.post("/api/files", headers=headers, files=bad_files, data=bad_data)
             self.assertEqual(bad_upload_res.status_code, 400)
-            print("[OK] Non-PDF file rejection verified")
+            print("[OK] Non-allowed file rejection verified")
 
             # 4. Create Share Link (Max Downloads = 1, Expiration = 24h, Password = Protected123!)
             share_payload = {
@@ -142,7 +159,6 @@ class TestVaultKeySecurityWorkflow(unittest.TestCase):
             self.assertIn("LINK_REVOKED", events)
 
             print("\n--- End-to-End VaultKey Security Test Passed 100% ---")
-
 
 
 if __name__ == "__main__":

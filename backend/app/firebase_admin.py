@@ -24,6 +24,13 @@ def _get_app() -> firebase_admin.App:
     if _firebase_app is not None:
         return _firebase_app
 
+    # If already initialized by firebase_admin default
+    try:
+        _firebase_app = firebase_admin.get_app()
+        return _firebase_app
+    except ValueError:
+        pass
+
     required = {
         "FIREBASE_PROJECT_ID": os.environ.get("FIREBASE_PROJECT_ID"),
         "FIREBASE_CLIENT_EMAIL": os.environ.get("FIREBASE_CLIENT_EMAIL"),
