@@ -1,6 +1,7 @@
 import uuid
-from datetime import datetime
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey
+from datetime import datetime, timezone
+from sqlalchemy import Column, String, Integer, Boolean, DateTime
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -13,7 +14,7 @@ class User(Base):
     id = Column(String(36), primary_key=True, default=generate_uuid)
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     files = relationship("FileItem", back_populates="owner", cascade="all, delete-orphan")
     shares = relationship("ShareLink", back_populates="owner", cascade="all, delete-orphan")
@@ -26,10 +27,10 @@ class FileItem(Base):
     owner_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     r2_object_key = Column(String(512), nullable=False)   # e.g. "uploads/<uuid>.enc"
     original_filename = Column(String(255), nullable=False)
-    mime_type = Column(String(100), default="application/pdf")
+    mime_type = Column(String(100), nullable=True, default=None)
     size = Column(Integer, nullable=False)
     iv_hex = Column(String(64), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     owner = relationship("User", back_populates="files")
     shares = relationship("ShareLink", back_populates="file", cascade="all, delete-orphan")
@@ -42,13 +43,13 @@ class ShareLink(Base):
     file_id = Column(String(36), ForeignKey("files.id", ondelete="CASCADE"), nullable=False)
     owner_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     token_hash = Column(String(64), unique=True, nullable=False, index=True)
-    expires_at = Column(DateTime, nullable=True)
+    expires_at = Column(DateTime(timezone=True), nullable=True)
     max_downloads = Column(Integer, default=5)
     download_count = Column(Integer, default=0)
     password_hash = Column(String(255), nullable=True)
     revoked = Column(Boolean, default=False)
-    revoked_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    revoked_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     file = relationship("FileItem", back_populates="shares")
     owner = relationship("User", back_populates="shares")
@@ -65,7 +66,7 @@ class AccessLog(Base):
     status = Column(String(20), nullable=False) # SUCCESS, DENIED, FAILED
     user_agent = Column(String(512), nullable=True)
     ip_address = Column(String(100), nullable=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     share = relationship("ShareLink", back_populates="access_logs")
     file = relationship("FileItem", back_populates="access_logs")

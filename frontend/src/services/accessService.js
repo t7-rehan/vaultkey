@@ -1,5 +1,7 @@
 import { request } from './api';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+
 export async function checkRecipientAccess(token) {
   return await request(`/access/${token}`, {
     method: 'GET',
@@ -17,7 +19,7 @@ export async function authorizePassword(token, password) {
  * Downloads the raw encrypted ciphertext payload and returns headers + ArrayBuffer
  */
 export async function downloadEncryptedFile(token, password = null) {
-  const response = await fetch(`/api/access/${token}/download`, {
+  const response = await fetch(`${API_BASE}/access/${token}/download`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

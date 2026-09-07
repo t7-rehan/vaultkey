@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import Response
@@ -8,14 +8,24 @@ from ..models import ShareLink, FileItem, AccessLog
 from ..schemas import RecipientCheckResponse, RecipientAuthorizeRequest
 from ..security import hash_share_token, verify_password
 from ..storage import download_file
+from ..limiter import limiter
+from ..utils import log_event, make_aware
 
 router = APIRouter(prefix="/api/access", tags=["Recipient Access"])
 
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
 def get_share_by_token(token: str, db: Session) -> Optional[ShareLink]:
     token_hash = hash_share_token(token)
     return db.query(ShareLink).filter(ShareLink.token_hash == token_hash).first()
 
+
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
 
 @router.get("/{token}", response_model=RecipientCheckResponse)
 def check_recipient_access(
@@ -24,8 +34,6 @@ def check_recipient_access(
     db: Session = Depends(get_db),
 ):
     share = get_share_by_token(token, db)
-    user_agent = request.headers.get("user-agent")
-    client_ip = request.client.host if request.client else None
 
     if not share:
         return RecipientCheckResponse(
@@ -44,16 +52,11 @@ def check_recipient_access(
     filename = file_item.original_filename if file_item else "Protected Document"
     file_size = file_item.size if file_item else 0
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     downloads_remaining = max(0, share.max_downloads - share.download_count)
 
     if share.revoked:
-        db.add(AccessLog(
-            share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-            event="ACCESS_DENIED", status="DENIED",
-            user_agent=user_agent, ip_address=client_ip,
-        ))
-        db.commit()
+        log_event(db, share, "ACCESS_DENIED", "DENIED", request)
         return RecipientCheckResponse(
             valid=False, original_filename=filename, file_size=file_size,
             expires_at=share.expires_at, max_downloads=share.max_downloads,
@@ -61,13 +64,8 @@ def check_recipient_access(
             revoked=True, status="REVOKED",
         )
 
-    if share.expires_at and share.expires_at < now:
-        db.add(AccessLog(
-            share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-            event="LINK_EXPIRED", status="DENIED",
-            user_agent=user_agent, ip_address=client_ip,
-        ))
-        db.commit()
+    if share.expires_at and make_aware(share.expires_at) < now:
+        log_event(db, share, "LINK_EXPIRED", "DENIED", request)
         return RecipientCheckResponse(
             valid=False, original_filename=filename, file_size=file_size,
             expires_at=share.expires_at, max_downloads=share.max_downloads,
@@ -76,12 +74,7 @@ def check_recipient_access(
         )
 
     if share.max_downloads > 0 and share.download_count >= share.max_downloads:
-        db.add(AccessLog(
-            share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-            event="ACCESS_DENIED", status="DENIED",
-            user_agent=user_agent, ip_address=client_ip,
-        ))
-        db.commit()
+        log_event(db, share, "ACCESS_DENIED", "DENIED", request)
         return RecipientCheckResponse(
             valid=False, original_filename=filename, file_size=file_size,
             expires_at=share.expires_at, max_downloads=share.max_downloads,
@@ -89,12 +82,7 @@ def check_recipient_access(
             revoked=False, status="LIMIT_REACHED",
         )
 
-    db.add(AccessLog(
-        share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-        event="ACCESS_ATTEMPT", status="SUCCESS",
-        user_agent=user_agent, ip_address=client_ip,
-    ))
-    db.commit()
+    log_event(db, share, "ACCESS_ATTEMPT", "SUCCESS", request)
 
     return RecipientCheckResponse(
         valid=True, original_filename=filename, file_size=file_size,
@@ -106,6 +94,7 @@ def check_recipient_access(
 
 
 @router.post("/{token}/authorize")
+@limiter.limit("5/minute")
 def authorize_password(
     token: str,
     payload: RecipientAuthorizeRequest,
@@ -113,41 +102,30 @@ def authorize_password(
     db: Session = Depends(get_db),
 ):
     share = get_share_by_token(token, db)
-    user_agent = request.headers.get("user-agent")
-    client_ip = request.client.host if request.client else None
 
     if not share:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid share token")
     if share.revoked:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access revoked")
-    if share.expires_at and share.expires_at < datetime.utcnow():
+    if share.expires_at and make_aware(share.expires_at) < datetime.now(timezone.utc):
         raise HTTPException(status_code=status.HTTP_410_GONE, detail="Link expired")
     if share.max_downloads > 0 and share.download_count >= share.max_downloads:
         raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Download limit reached")
 
     if share.password_hash:
         if not payload.password or not verify_password(payload.password.strip(), share.password_hash):
-            db.add(AccessLog(
-                share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-                event="PASSWORD_FAILED", status="FAILED",
-                user_agent=user_agent, ip_address=client_ip,
-            ))
-            db.commit()
+            log_event(db, share, "PASSWORD_FAILED", "FAILED", request)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Unable to authorize access with the provided password.",
             )
 
-    db.add(AccessLog(
-        share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-        event="ACCESS_GRANTED", status="SUCCESS",
-        user_agent=user_agent, ip_address=client_ip,
-    ))
-    db.commit()
+    log_event(db, share, "ACCESS_GRANTED", "SUCCESS", request)
     return {"status": "authorized", "message": "Access authorized"}
 
 
 @router.post("/{token}/download")
+@limiter.limit("5/minute")
 def download_encrypted_file(
     token: str,
     payload: RecipientAuthorizeRequest,
@@ -155,17 +133,21 @@ def download_encrypted_file(
     db: Session = Depends(get_db),
 ):
     share = get_share_by_token(token, db)
-    user_agent = request.headers.get("user-agent")
-    client_ip = request.client.host if request.client else None
 
     if not share:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid share token")
+
     if share.revoked:
+        # Previously: no log was written here — now fixed
+        log_event(db, share, "ACCESS_DENIED", "DENIED", request)
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="This VaultKey link has been revoked by its owner.",
         )
-    if share.expires_at and share.expires_at < datetime.utcnow():
+
+    if share.expires_at and make_aware(share.expires_at) < datetime.now(timezone.utc):
+        # Previously: no log was written here — now fixed
+        log_event(db, share, "LINK_EXPIRED", "DENIED", request)
         raise HTTPException(
             status_code=status.HTTP_410_GONE,
             detail="This VaultKey link has expired.",
@@ -174,12 +156,7 @@ def download_encrypted_file(
     # Password check
     if share.password_hash:
         if not payload.password or not verify_password(payload.password.strip(), share.password_hash):
-            db.add(AccessLog(
-                share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-                event="PASSWORD_FAILED", status="FAILED",
-                user_agent=user_agent, ip_address=client_ip,
-            ))
-            db.commit()
+            log_event(db, share, "PASSWORD_FAILED", "FAILED", request)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Unable to authorize access with the provided password.",
@@ -198,31 +175,16 @@ def download_encrypted_file(
         )
 
         if rows_updated == 0:
-            db.add(AccessLog(
-                share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-                event="ACCESS_DENIED", status="DENIED",
-                user_agent=user_agent, ip_address=client_ip,
-            ))
-            db.commit()
+            log_event(db, share, "ACCESS_DENIED", "DENIED", request)
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="The maximum number of downloads for this file has been reached.",
             )
 
         db.commit()
-        db.add(AccessLog(
-            share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-            event="FILE_DOWNLOADED", status="SUCCESS",
-            user_agent=user_agent, ip_address=client_ip,
-        ))
-        db.commit()
+        log_event(db, share, "FILE_DOWNLOADED", "SUCCESS", request)
     else:
-        db.add(AccessLog(
-            share_id=share.id, file_id=share.file_id, owner_id=share.owner_id,
-            event="FILE_VIEWED", status="SUCCESS",
-            user_agent=user_agent, ip_address=client_ip,
-        ))
-        db.commit()
+        log_event(db, share, "FILE_VIEWED", "SUCCESS", request)
 
     # Fetch file metadata from Postgres
     file_item = db.query(FileItem).filter(FileItem.id == share.file_id).first()

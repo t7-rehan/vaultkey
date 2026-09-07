@@ -13,6 +13,31 @@ router = APIRouter(prefix="/api/files", tags=["Files"])
 
 MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024  # 50 MB
 
+# Allowed file extensions matching encrypt.js validation
+ALLOWED_EXTENSIONS = {
+    ".pdf", ".png", ".jpg", ".jpeg", ".gif", ".webp",
+    ".txt", ".md", ".json", ".js", ".py", ".html", ".css", ".csv", ".log",
+}
+
+# Extension to MIME type mapping
+EXTENSION_TO_MIME = {
+    ".pdf":  "application/pdf",
+    ".png":  "image/png",
+    ".jpg":  "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif":  "image/gif",
+    ".webp": "image/webp",
+    ".txt":  "text/plain",
+    ".md":   "text/markdown",
+    ".json": "application/json",
+    ".js":   "text/javascript",
+    ".py":   "text/x-python",
+    ".html": "text/html",
+    ".css":  "text/css",
+    ".csv":  "text/csv",
+    ".log":  "text/plain",
+}
+
 
 @router.post("", response_model=FileCreateResponse)
 async def upload_encrypted_file(
@@ -37,13 +62,18 @@ async def upload_encrypted_file(
             detail="Uploaded file cannot be empty.",
         )
 
-    # Filename validation — PDF only
+    # Filename validation — check extension against allow-list
     clean_filename = os.path.basename(original_filename.strip())
-    if not clean_filename.lower().endswith(".pdf"):
+    ext = os.path.splitext(clean_filename)[1].lower()
+    
+    if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only PDF files are accepted.",
+            detail=f"File type '{ext}' is not supported. Allowed types: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
         )
+
+    # Derive MIME type from extension
+    mime_type = EXTENSION_TO_MIME[ext]
 
     # Upload ciphertext to R2
     object_key = generate_object_key()
@@ -54,7 +84,7 @@ async def upload_encrypted_file(
         owner_id=current_user.id,
         r2_object_key=object_key,
         original_filename=clean_filename,
-        mime_type="application/pdf",
+        mime_type=mime_type,
         size=file_size,
         iv_hex=iv_hex.strip(),
     )
@@ -78,22 +108,33 @@ def list_files(
         .all()
     )
 
+    if not files:
+        return []
+
+    # Batch query for share statistics to eliminate N+1
+    file_ids = [f.id for f in files]
+    from sqlalchemy import case
+    
+    share_stats = (
+        db.query(
+            ShareLink.file_id,
+            func.count(case((ShareLink.revoked == False, 1))).label("active_shares"),
+            func.coalesce(func.sum(ShareLink.download_count), 0).label("total_downloads"),
+        )
+        .filter(ShareLink.file_id.in_(file_ids))
+        .group_by(ShareLink.file_id)
+        .all()
+    )
+    
+    # Build lookup map
+    stats_map = {row.file_id: row for row in share_stats}
+
     result = []
     for f in files:
-        active_shares = (
-            db.query(ShareLink)
-            .filter(ShareLink.file_id == f.id, ShareLink.revoked == False)
-            .count()
-        )
-        total_dl = (
-            db.query(func.sum(ShareLink.download_count))
-            .filter(ShareLink.file_id == f.id)
-            .scalar()
-            or 0
-        )
+        stats = stats_map.get(f.id)
         res = FileResponse.model_validate(f)
-        res.active_shares_count = active_shares
-        res.total_downloads = total_dl
+        res.active_shares_count = stats.active_shares if stats else 0
+        res.total_downloads = stats.total_downloads if stats else 0
         result.append(res)
 
     return result
@@ -113,21 +154,23 @@ def get_file_detail(
     if not f:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
 
-    active_shares = (
-        db.query(ShareLink)
-        .filter(ShareLink.file_id == f.id, ShareLink.revoked == False)
-        .count()
-    )
-    total_dl = (
-        db.query(func.sum(ShareLink.download_count))
+    # Use batch query pattern for consistency (even though it's a single file)
+    from sqlalchemy import case
+    
+    share_stats = (
+        db.query(
+            ShareLink.file_id,
+            func.count(case((ShareLink.revoked == False, 1))).label("active_shares"),
+            func.coalesce(func.sum(ShareLink.download_count), 0).label("total_downloads"),
+        )
         .filter(ShareLink.file_id == f.id)
-        .scalar()
-        or 0
+        .group_by(ShareLink.file_id)
+        .first()
     )
 
     res = FileResponse.model_validate(f)
-    res.active_shares_count = active_shares
-    res.total_downloads = total_dl
+    res.active_shares_count = share_stats.active_shares if share_stats else 0
+    res.total_downloads = share_stats.total_downloads if share_stats else 0
     return res
 
 

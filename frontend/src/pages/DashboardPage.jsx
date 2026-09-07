@@ -231,7 +231,7 @@ export function DashboardPage() {
                           icon={Link2}
                           onClick={() => {
                             // Prompt to re-key or generate new link
-                            setShareFileTarget({ file, keyHex: 'GENERATED_NEW' });
+                            setShareFileTarget({ file, keyHex: null });
                           }}
                         >
                           CREATE LINK

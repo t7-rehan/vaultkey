@@ -36,27 +36,18 @@ export function UploadModal({ isOpen, onClose, onUploadSuccess }) {
       return false;
     }
 
-    // Check file extension
-    if (!file.name.toLowerCase().endsWith('.pdf')) {
-      setErrorMessage("Only PDF files are supported.");
+    // Accept all supported file types from encrypt.js
+    const allowedExtensions = ['.pdf', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.txt', '.md', '.json', '.js', '.py', '.html', '.css', '.csv', '.log'];
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    
+    if (!allowedExtensions.includes(ext)) {
+      setErrorMessage("Unsupported file type.");
       setState('error');
       return false;
     }
 
-    // Check PDF magic bytes (%PDF-)
-    try {
-      const buffer = await file.slice(0, 5).arrayBuffer();
-      const header = new TextDecoder().decode(buffer);
-      if (!header.startsWith('%PDF-')) {
-        setErrorMessage("Invalid PDF file structure detected.");
-        setState('error');
-        return false;
-      }
-    } catch (e) {
-      setErrorMessage("Could not validate file format.");
-      setState('error');
-      return false;
-    }
+    // Note: Magic-byte validation is handled by validateFileContent() in encrypt.js
+    // before encryption, so we don't duplicate it here.
 
     return true;
   };
@@ -127,7 +118,7 @@ export function UploadModal({ isOpen, onClose, onUploadSuccess }) {
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Upload PDF"
+      title="Upload File"
       subtitle="Secure your file before sharing it."
     >
       <div className="space-y-6">
@@ -147,7 +138,7 @@ export function UploadModal({ isOpen, onClose, onUploadSuccess }) {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,application/pdf"
+                accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.md,.json,.js,.py,.html,.css,.csv,.log"
                 className="hidden"
                 onChange={handleFileChange}
               />
@@ -161,7 +152,7 @@ export function UploadModal({ isOpen, onClose, onUploadSuccess }) {
                     {selectedFile.name}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB · PDF Document
+                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB · {selectedFile.name.split('.').pop().toUpperCase()} Document
                   </span>
                 </div>
               ) : (
@@ -170,10 +161,10 @@ export function UploadModal({ isOpen, onClose, onUploadSuccess }) {
                     <FileUp className="w-8 h-8" />
                   </div>
                   <span className="font-medium text-sm text-gray-800 dark:text-gray-200">
-                    Drop PDF here or <span className="text-brand-500 underline font-semibold">browse files</span>
+                    Drop file here or <span className="text-brand-500 underline font-semibold">browse files</span>
                   </span>
                   <span className="text-xs text-gray-400 dark:text-gray-500">
-                    PDF files only · Maximum 50 MB
+                    PDF, images, text files · Maximum 50 MB
                   </span>
                 </div>
               )}

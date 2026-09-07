@@ -225,7 +225,7 @@ export function ShareRecipientPage() {
                 {accessData.original_filename}
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {(accessData.file_size / (1024 * 1024)).toFixed(2)} MB · PDF Document
+                {(accessData.file_size / (1024 * 1024)).toFixed(2)} MB · {accessData.original_filename?.split('.').pop()?.toUpperCase() ?? 'File'} Document
               </span>
             </div>
           </div>

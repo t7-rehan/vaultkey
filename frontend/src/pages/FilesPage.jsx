@@ -125,7 +125,7 @@ export function FilesPage() {
                       variant="outline"
                       size="sm"
                       icon={Link2}
-                      onClick={() => setShareFileTarget({ file, keyHex: 'KEY' })}
+                      onClick={() => setShareFileTarget({ file, keyHex: null })}
                     >
                       NEW LINK
                     </Button>

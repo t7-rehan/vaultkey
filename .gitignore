@@ -46,8 +46,11 @@ backend/storage/
 
 # ── Node / Frontend ──────────────────────────────────────────
 node_modules/
-frontend/dist/
+frontend/node_modules/
 frontend/.vite/
+frontend/node_modules/.vite/
+frontend/package-lock.json
+frontend/dist/
 *.log
 npm-debug.log*
 yarn-debug.log*

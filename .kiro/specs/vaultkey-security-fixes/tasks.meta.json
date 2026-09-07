@@ -1,0 +1,414 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Write bug condition exploration tests (BEFORE any fixes)": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685631693
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685645823
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788687817691
+      }
+    ],
+    "2. Write preservation property tests (BEFORE implementing any fix)": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685632505
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788687828760
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788690670962
+      }
+    ],
+    "3.1 Remove wildcard and use environment-driven origins in `main.py`": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685632664
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788690682724
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788690850922
+      }
+    ],
+    "3.2 Document ALLOWED_ORIGINS in `backend/.env.example`": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685632793
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788690863588
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788690894745
+      }
+    ],
+    "3.3 Verify bug condition exploration test now passes for Issue 2": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685632905
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788690907055
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691171759
+      }
+    ],
+    "3.4 Verify preservation tests still pass after Issue 2 fix": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633014
+      },
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691178004
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691867707
+      }
+    ],
+    "4.1 Verify `slowapi` and `limits` are present in `requirements.txt`": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633160
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691888177
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691895378
+      }
+    ],
+    "4.2 Verify rate-limiter middleware is wired in `main.py`": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633270
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691902453
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691909587
+      }
+    ],
+    "4.3 Apply `@limiter.limit(\"5/minute\")` decorators to access endpoints in `routes/access.py`": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633366
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691916719
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691924021
+      }
+    ],
+    "4.4 Verify bug condition exploration test now passes for Issue 3": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633467
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691930945
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691939336
+      }
+    ],
+    "4.5 Verify preservation tests still pass after Issue 3 fix": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633566
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691946318
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691954547
+      }
+    ],
+    "5.1 Add magic bytes and null-byte validation in `frontend/src/crypto/encrypt.js`": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633660
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691963038
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691971459
+      }
+    ],
+    "5.2 Verify bug condition exploration test now passes for Issue 5": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633774
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691979574
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692029021
+      }
+    ],
+    "5.3 Verify preservation tests still pass after Issue 5 fix": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685633926
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692036061
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692043231
+      }
+    ],
+    "6.1 Add `_log_event` helper to `routes/access.py` and replace all inline AccessLog constructions": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634043
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692051646
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692060299
+      }
+    ],
+    "6.2 Add missing log entries for revoked and expired share links in `download_encrypted_file`": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634142
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692068000
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692075827
+      }
+    ],
+    "6.3 Verify bug condition exploration test now passes for Issue 8": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634258
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692082644
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692394683
+      }
+    ],
+    "6.4 Verify preservation tests still pass after Issue 8 fix": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634364
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692400778
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692409141
+      }
+    ],
+    "7.1 Reconcile `database/schema.sql` with the live SQLAlchemy models": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634471
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692415946
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692424106
+      }
+    ],
+    "7.2 Verify bug condition exploration test now passes for Issue 11": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634586
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692430035
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692435815
+      }
+    ],
+    "7.3 Verify preservation tests still pass after Issue 11 fix": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634684
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692441990
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692448777
+      }
+    ],
+    "8. Checkpoint — Ensure all tests pass": [
+      {
+        "executionId": "091c9bdd-a56b-4021-9e10-c18c59156de9",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788685634791
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692455302
+      },
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692517887
+      }
+    ],
+    "3. Fix Issue 2 — CORS Wildcard Enabled [CRITICAL]": [
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691867980
+      }
+    ],
+    "4. Fix Issue 3 — No Rate Limiting on Public Access Endpoints [HIGH]": [
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788691955613
+      }
+    ],
+    "5. Fix Issue 5 — No File-Content Validation Before Encryption [MEDIUM]": [
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692044419
+      }
+    ],
+    "6. Fix Issue 8 — Missing Audit Log Entries on Revoked/Expired Downloads [MEDIUM]": [
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692409346
+      }
+    ],
+    "7. Fix Issue 11 — `database/schema.sql` Out of Sync with `models.py` [LOW]": [
+      {
+        "executionId": "5028e0ee-ad08-4b72-b97c-aab3fe699bab",
+        "chatSessionId": "sess_d8426248-9ea7-4534-8815-a40552a67e24",
+        "timestamp": 1788692448947
+      }
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 # Auth Schemas
 class UserRegister(BaseModel):
@@ -56,6 +56,13 @@ class ShareCreateRequest(BaseModel):
     max_downloads: int = Field(5, ge=0, le=10)
 
     password: Optional[str] = None
+
+    @field_validator("password")
+    @classmethod
+    def password_min_length(cls, v):
+        if v is not None and len(v.strip()) > 0 and len(v.strip()) < 4:
+            raise ValueError("Share password must be at least 4 characters.")
+        return v
 
 class ShareCreateResponse(BaseModel):
     share_id: str

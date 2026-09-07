@@ -1,0 +1,94 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0 -- c:\Users\Aamin\Desktop\App\vaultkey\backend\venv\Scripts\python.exe
+rootdir: c:\Users\Aamin\Desktop\App\vaultkey\backend
+plugins: anyio-4.14.2
+collecting ... collected 42 items
+
+test_security_preservation.py::TestIssue2CorsPreservation::test_allowed_origin_receives_cors_header PASSED [  2%]
+test_security_preservation.py::TestIssue2CorsPreservation::test_cors_middleware_expose_headers_config PASSED [  4%]
+test_security_preservation.py::TestIssue2CorsPreservation::test_credentials_allowed_for_configured_origin PASSED [  7%]
+test_security_preservation.py::TestIssue2CorsPreservation::test_expose_headers_contains_iv_hex PASSED [  9%]
+test_security_preservation.py::TestIssue2CorsPreservation::test_expose_headers_contains_original_filename PASSED [ 11%]
+test_security_preservation.py::TestIssue2CorsPreservation::test_health_endpoint_responds_with_200 PASSED [ 14%]
+test_security_preservation.py::TestIssue2CorsPreservation::test_localhost_3000_receives_cors_header PASSED [ 16%]
+test_security_preservation.py::TestIssue3RateLimitingPreservation::test_authorize_endpoint_returns_correct_response_for_no_password_share PASSED [ 19%]
+test_security_preservation.py::TestIssue3RateLimitingPreservation::test_five_authorize_requests_all_get_401_not_429 PASSED [ 21%]
+test_security_preservation.py::TestIssue3RateLimitingPreservation::test_five_download_requests_all_processed_not_429 PASSED [ 23%]
+test_security_preservation.py::TestIssue3RateLimitingPreservation::test_get_check_endpoint_unaffected_by_post_limiters PASSED [ 26%]
+test_security_preservation.py::TestIssue3RateLimitingPreservation::test_limiter_shared_module_unchanged PASSED [ 28%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_encrypt_file_exported PASSED [ 30%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_error_message_describes_binary_mismatch PASSED [ 33%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_error_message_describes_null_byte_issue PASSED [ 35%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_gif_magic_bytes_present_in_lookup PASSED [ 38%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_jpg_jpeg_magic_bytes_present_in_lookup PASSED [ 40%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_on_progress_callback_still_called PASSED [ 42%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_text_extensions_set_present_in_source PASSED [ 45%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_valid_pdf_magic_bytes_present_in_lookup PASSED [ 47%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_valid_png_magic_bytes_present_in_lookup PASSED [ 50%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_validate_file_content_called_before_generate_key PASSED [ 52%]
+test_security_preservation.py::TestIssue5FileValidationPreservation::test_webp_magic_bytes_present_in_lookup PASSED [ 54%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_attempt_logged_on_valid_share_check PASSED [ 57%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_denied_logged_on_revoked_share_check PASSED [ 59%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_denied_on_exhausted_download_limit_check PASSED [ 61%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_granted_logged_on_successful_authorize PASSED [ 64%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_log_event_field_values_match_spec PASSED [ 66%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_link_expired_logged_on_expired_share_check PASSED [ 69%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_log_helper_eliminates_inline_db_add_accesslog PASSED [ 71%]
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_password_failed_logged_on_wrong_password PASSED [ 73%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_access_logs_table_columns_in_database_match_model PASSED [ 76%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_all_model_tables_exist_in_database PASSED [ 78%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_create_all_in_main_py PASSED [ 80%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_create_all_is_noop_on_existing_tables PASSED [ 83%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_files_table_columns_in_database_match_model PASSED [ 85%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_firebase_uid_absent_from_both_schema_and_models PASSED [ 88%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_schema_sql_access_logs_columns_match_model PASSED [ 90%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_schema_sql_last_synced_comment_present PASSED [ 92%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_schema_sql_users_columns_match_model PASSED [ 95%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_shares_table_columns_in_database_match_model PASSED [ 97%]
+test_security_preservation.py::TestIssue11SchemaSyncPreservation::test_users_table_columns_in_database_match_model PASSED [100%]
+
+============================== warnings summary ===============================
+venv\Lib\site-packages\fastapi\testclient.py:1
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\schemas.py:14
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\app\schemas.py:14: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class UserResponse(BaseModel):
+
+app\schemas.py:28
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\app\schemas.py:28: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class FileCreateResponse(BaseModel):
+
+app\schemas.py:39
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\app\schemas.py:39: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class FileResponse(BaseModel):
+
+app\schemas.py:70
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\app\schemas.py:70: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ShareDetailResponse(BaseModel):
+
+app\schemas.py:102
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\app\schemas.py:102: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ActivityLogResponse(BaseModel):
+
+test_security_preservation.py: 30 warnings
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\venv\Lib\site-packages\sqlalchemy\sql\schema.py:3627: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+
+test_security_preservation.py::TestIssue3RateLimitingPreservation::test_get_check_endpoint_unaffected_by_post_limiters
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_attempt_logged_on_valid_share_check
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_denied_logged_on_revoked_share_check
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_access_denied_on_exhausted_download_limit_check
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_link_expired_logged_on_expired_share_check
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\app\routes\access.py:80: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+test_security_preservation.py::TestIssue8AuditLogPreservation::test_link_expired_logged_on_expired_share_check
+  c:\Users\Aamin\Desktop\App\vaultkey\backend\test_security_preservation.py:104: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expires_at = datetime.utcnow() - timedelta(hours=1)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 42 passed, 42 warnings in 48.08s =======================
+
+=== Exit code: 0 ===

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
-import { Shield, Clock, Hash, Lock, Link as LinkIcon } from 'lucide-react';
+import { Shield, Clock, Hash, Lock, Link as LinkIcon, Key, AlertCircle } from 'lucide-react';
 import { createShareLink } from '../../services/shareService';
 import { buildShareUrl } from '../../crypto/keyManager';
 
@@ -10,8 +10,13 @@ export function CreateShareModal({ isOpen, onClose, fileItem, keyHex, onShareCre
   const [maxDownloads, setMaxDownloads] = useState(5);
   const [enablePassword, setEnablePassword] = useState(false);
   const [password, setPassword] = useState('');
+  const [manualKeyHex, setManualKeyHex] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Determine effective key: use prop if present, else fall back to manual input
+  const effectiveKey = keyHex || manualKeyHex.trim();
+  const needsKeyInput = !keyHex;
 
   if (!fileItem) return null;
 
@@ -25,6 +30,10 @@ export function CreateShareModal({ isOpen, onClose, fileItem, keyHex, onShareCre
         throw new Error("Password must be at least 4 characters.");
       }
 
+      if (!effectiveKey || effectiveKey.length !== 64) {
+        throw new Error("A valid 64-character hex encryption key is required to build the share URL.");
+      }
+
       const res = await createShareLink(
         fileItem.id,
         expirationHours,
@@ -33,7 +42,7 @@ export function CreateShareModal({ isOpen, onClose, fileItem, keyHex, onShareCre
       );
 
       // Construct zero-knowledge fragment share link using raw token & client keyHex
-      const shareUrl = buildShareUrl(res.token, keyHex);
+      const shareUrl = buildShareUrl(res.token, effectiveKey);
 
       onShareCreated({
         ...res,
@@ -72,6 +81,33 @@ export function CreateShareModal({ isOpen, onClose, fileItem, keyHex, onShareCre
             </div>
           </div>
         </div>
+
+        {/* Key Input for re-sharing existing files */}
+        {needsKeyInput && (
+          <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl space-y-2">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-1.5">
+                <p className="text-xs text-amber-700 dark:text-amber-400">
+                  <strong>Encryption key required.</strong> VaultKey never stores your key. Paste the original 64-character hex key for this file to generate a new share link.
+                </p>
+                <p className="text-xs text-amber-800 dark:text-amber-300 font-semibold">
+                  ⚠️ If you lost the key, this file cannot be decrypted or shared — including by you.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-2">
+              <Key className="w-4 h-4 text-amber-500 shrink-0" />
+              <input
+                type="text"
+                placeholder="Paste 64-char hex key here..."
+                value={manualKeyHex}
+                onChange={(e) => setManualKeyHex(e.target.value)}
+                className="flex-1 px-3 py-1.5 text-xs font-mono bg-white dark:bg-surface-dark border border-amber-300 dark:border-amber-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Expiration Dropdown */}
         <div>

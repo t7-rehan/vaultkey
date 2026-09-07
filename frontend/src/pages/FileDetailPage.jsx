@@ -118,7 +118,7 @@ export function FileDetailPage() {
             variant="outline"
             size="sm"
             icon={Link2}
-            onClick={() => setShareFileTarget({ file, keyHex: 'NEW_KEY' })}
+            onClick={() => setShareFileTarget({ file, keyHex: null })}
           >
             Create New Link
           </Button>

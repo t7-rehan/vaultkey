@@ -1,17 +1,19 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import User, FileItem, ShareLink, AccessLog
 from ..schemas import ShareCreateRequest, ShareCreateResponse, ShareDetailResponse
 from ..security import get_current_user, generate_secure_token, hash_share_token, hash_password
+from ..utils import log_event, make_aware
 
 router = APIRouter(prefix="/api/shares", tags=["Shares"])
 
 @router.post("", response_model=ShareCreateResponse)
 def create_share_link(
     payload: ShareCreateRequest,
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -30,7 +32,7 @@ def create_share_link(
     # Calculate expiration date
     expires_at = None
     if payload.expiration_hours and payload.expiration_hours > 0:
-        expires_at = datetime.utcnow() + timedelta(hours=payload.expiration_hours)
+        expires_at = datetime.now(timezone.utc) + timedelta(hours=payload.expiration_hours)
 
     # Generate raw token & hash
     raw_token = generate_secure_token()
@@ -56,15 +58,7 @@ def create_share_link(
     db.flush()  # assign share.id
 
     # Audit log
-    audit_log = AccessLog(
-        share_id=share.id,
-        file_id=file_item.id,
-        owner_id=current_user.id,
-        event="LINK_CREATED",
-        status="SUCCESS"
-    )
-    db.add(audit_log)
-    db.commit()
+    log_event(db, share, "LINK_CREATED", "SUCCESS", request)
 
     return ShareCreateResponse(
         share_id=share.id,
@@ -89,7 +83,7 @@ def list_user_shares(
 
     shares = query.order_by(ShareLink.created_at.desc()).all()
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     result = []
     for s in shares:
         f = db.query(FileItem).filter(FileItem.id == s.file_id).first()
@@ -98,12 +92,12 @@ def list_user_shares(
         status_str = "ACTIVE"
         if s.revoked:
             status_str = "REVOKED"
-        elif s.expires_at and s.expires_at < now:
+        elif s.expires_at and make_aware(s.expires_at) < now:
             status_str = "EXPIRED"
-        elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
-            status_str = "LIMIT_REACHED"
         elif s.max_downloads == 0:
             status_str = "VIEW_ONLY"
+        elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
+            status_str = "LIMIT_REACHED"
 
 
         item = ShareDetailResponse(
@@ -140,16 +134,16 @@ def get_share_detail(
     f = db.query(FileItem).filter(FileItem.id == s.file_id).first()
     filename = f.original_filename if f else "Unknown"
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     status_str = "ACTIVE"
     if s.revoked:
         status_str = "REVOKED"
-    elif s.expires_at and s.expires_at < now:
+    elif s.expires_at and make_aware(s.expires_at) < now:
         status_str = "EXPIRED"
-    elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
-        status_str = "LIMIT_REACHED"
     elif s.max_downloads == 0:
         status_str = "VIEW_ONLY"
+    elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
+        status_str = "LIMIT_REACHED"
 
 
     return ShareDetailResponse(
@@ -169,6 +163,7 @@ def get_share_detail(
 @router.post("/{share_id}/revoke")
 def revoke_share_link(
     share_id: str,
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -182,17 +177,9 @@ def revoke_share_link(
 
     if not s.revoked:
         s.revoked = True
-        s.revoked_at = datetime.utcnow()
+        s.revoked_at = datetime.now(timezone.utc)
 
         # Audit log
-        audit_log = AccessLog(
-            share_id=s.id,
-            file_id=s.file_id,
-            owner_id=s.owner_id,
-            event="LINK_REVOKED",
-            status="SUCCESS"
-        )
-        db.add(audit_log)
-        db.commit()
+        log_event(db, s, "LINK_REVOKED", "SUCCESS", request)
 
     return {"status": "success", "message": "Share link revoked successfully"}

@@ -13,7 +13,7 @@ if not DATABASE_URL:
 # Neon (and most managed Postgres providers) use 'postgres://' scheme;
 # SQLAlchemy requires 'postgresql://'.
 if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://neondb_owner:npg_ZBz83AnMgiHK@ep-square-cloud-aztwfg5l.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=req", 1)
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 engine = create_engine(
     DATABASE_URL,

@@ -20,13 +20,16 @@ def get_security_activity(
 
     logs = query.order_by(AccessLog.timestamp.desc()).limit(100).all()
 
+    # Batch query for file names to eliminate N+1
+    file_ids = {log.file_id for log in logs if log.file_id}
+    files_map = {}
+    if file_ids:
+        files = db.query(FileItem).filter(FileItem.id.in_(file_ids)).all()
+        files_map = {f.id: f.original_filename for f in files}
+
     result = []
     for log in logs:
-        filename = None
-        if log.file_id:
-            f = db.query(FileItem).filter(FileItem.id == log.file_id).first()
-            if f:
-                filename = f.original_filename
+        filename = files_map.get(log.file_id) if log.file_id else None
 
         res = ActivityLogResponse(
             id=log.id,
