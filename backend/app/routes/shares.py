@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..models import User, FileItem, ShareLink, AccessLog
+from ..models import User, FileItem, ShareLink, AccessLog, AccessMode
 from ..schemas import ShareCreateRequest, ShareCreateResponse, ShareDetailResponse
 from ..security import get_current_user, generate_secure_token, hash_share_token, hash_password
 from ..utils import log_event, make_aware
@@ -43,11 +43,19 @@ def create_share_link(
     if payload.password and payload.password.strip():
         password_hash = hash_password(payload.password.strip())
 
+    # Resolve access_mode: explicit field takes precedence.
+    # For backwards-compat: if caller passes max_downloads=0 without an explicit
+    # access_mode, treat it as view_only (preserves legacy behaviour).
+    resolved_access_mode = payload.access_mode
+    if resolved_access_mode == AccessMode.DOWNLOAD.value and payload.max_downloads == 0:
+        resolved_access_mode = AccessMode.VIEW_ONLY.value
+
     share = ShareLink(
         file_id=file_item.id,
         owner_id=current_user.id,
         token_hash=token_hash,
         expires_at=expires_at,
+        access_mode=resolved_access_mode,
         max_downloads=payload.max_downloads,
         download_count=0,
         password_hash=password_hash,
@@ -67,6 +75,7 @@ def create_share_link(
         original_filename=file_item.original_filename,
         expires_at=expires_at,
         max_downloads=payload.max_downloads,
+        access_mode=resolved_access_mode,
         has_password=password_hash is not None,
         created_at=share.created_at
     )
@@ -94,7 +103,7 @@ def list_user_shares(
             status_str = "REVOKED"
         elif s.expires_at and make_aware(s.expires_at) < now:
             status_str = "EXPIRED"
-        elif s.max_downloads == 0:
+        elif s.access_mode == AccessMode.VIEW_ONLY.value:
             status_str = "VIEW_ONLY"
         elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
             status_str = "LIMIT_REACHED"
@@ -107,6 +116,7 @@ def list_user_shares(
             expires_at=s.expires_at,
             max_downloads=s.max_downloads,
             download_count=s.download_count,
+            access_mode=s.access_mode or AccessMode.DOWNLOAD.value,
             has_password=s.password_hash is not None,
             revoked=s.revoked,
             revoked_at=s.revoked_at,
@@ -140,7 +150,7 @@ def get_share_detail(
         status_str = "REVOKED"
     elif s.expires_at and make_aware(s.expires_at) < now:
         status_str = "EXPIRED"
-    elif s.max_downloads == 0:
+    elif s.access_mode == AccessMode.VIEW_ONLY.value:
         status_str = "VIEW_ONLY"
     elif s.max_downloads > 0 and s.download_count >= s.max_downloads:
         status_str = "LIMIT_REACHED"
@@ -153,6 +163,7 @@ def get_share_detail(
         expires_at=s.expires_at,
         max_downloads=s.max_downloads,
         download_count=s.download_count,
+        access_mode=s.access_mode or AccessMode.DOWNLOAD.value,
         has_password=s.password_hash is not None,
         revoked=s.revoked,
         revoked_at=s.revoked_at,

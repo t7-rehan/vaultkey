@@ -1,6 +1,19 @@
 import os
+from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+
+# Load .env early — before reading env vars — so the correct DATABASE_URL is
+# available regardless of whether the app was started via run.py, uvicorn
+# directly, or a reload worker process.  override=True ensures .env values
+# win over any stale OS-level variable set in a previous shell session.
+try:
+    from dotenv import load_dotenv
+    _env_file = Path(__file__).parent.parent / ".env"
+    if _env_file.exists():
+        load_dotenv(_env_file, override=True)
+except ImportError:
+    pass  # python-dotenv not available; rely on OS environment
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 

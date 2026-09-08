@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Literal
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
@@ -54,6 +54,10 @@ class ShareCreateRequest(BaseModel):
     file_id: str
     expiration_hours: Optional[int] = None # None, 1, 6, 24, 72 (3 days), 168 (7 days)
     max_downloads: int = Field(5, ge=0, le=10)
+    # access_mode explicitly controls share behaviour at both API and UI level.
+    # "download"  – recipient may retrieve and save the decrypted file (default).
+    # "view_only" – backend rejects /download; frontend shows restricted viewer only.
+    access_mode: Literal["download", "view_only"] = "download"
 
     password: Optional[str] = None
 
@@ -71,6 +75,7 @@ class ShareCreateResponse(BaseModel):
     original_filename: str
     expires_at: Optional[datetime]
     max_downloads: int
+    access_mode: str  # "download" | "view_only"
     has_password: bool
     created_at: datetime
 
@@ -81,11 +86,12 @@ class ShareDetailResponse(BaseModel):
     expires_at: Optional[datetime]
     max_downloads: int
     download_count: int
+    access_mode: str  # "download" | "view_only"
     has_password: bool
     revoked: bool
     revoked_at: Optional[datetime]
     created_at: datetime
-    status: str # ACTIVE, EXPIRED, REVOKED, LIMIT_REACHED
+    status: str # ACTIVE, EXPIRED, REVOKED, LIMIT_REACHED, VIEW_ONLY
 
     class Config:
         from_attributes = True
@@ -98,12 +104,26 @@ class RecipientCheckResponse(BaseModel):
     expires_at: Optional[datetime]
     max_downloads: int
     downloads_remaining: int
+    access_mode: str  # "download" | "view_only"
     requires_password: bool
     revoked: bool
     status: str  # OK, EXPIRED, REVOKED, LIMIT_REACHED, INVALID
 
 class RecipientAuthorizeRequest(BaseModel):
     password: Optional[str] = None
+
+# Recipient-side audit reporting (client fires this when a restricted action is blocked).
+# The backend records the event in the shared owner's activity log so they know
+# the restriction was triggered.  No sensitive data (key, blob content) is included.
+class BlockedActionReportRequest(BaseModel):
+    # Must be one of the allowed restricted-action event types only.
+    event: Literal[
+        "PRINT_BLOCKED",
+        "DOWNLOAD_BLOCKED",
+        "SAVE_ATTEMPT_BLOCKED",
+        "VIEW_STARTED",
+        "VIEW_COMPLETED",
+    ]
 
 # Activity Log Schema
 class ActivityLogResponse(BaseModel):

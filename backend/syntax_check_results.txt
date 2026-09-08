@@ -1,0 +1,8 @@
+OK   C:\Users\Aamin\Desktop\App\vaultkey\backend\test_view_only.py
+OK   C:\Users\Aamin\Desktop\App\vaultkey\backend\app\models.py
+OK   C:\Users\Aamin\Desktop\App\vaultkey\backend\app\schemas.py
+OK   C:\Users\Aamin\Desktop\App\vaultkey\backend\app\routes\access.py
+OK   C:\Users\Aamin\Desktop\App\vaultkey\backend\app\routes\shares.py
+OK   C:\Users\Aamin\Desktop\App\vaultkey\backend\alembic\versions\002_add_access_mode.py
+
+All OK: True

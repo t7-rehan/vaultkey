@@ -1,9 +1,21 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Integer, Boolean, DateTime
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, Enum as SAEnum
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
+import enum
+
+
+class AccessMode(str, enum.Enum):
+    """
+    Controls how a recipient may interact with shared content.
+    DOWNLOAD  – recipient may download the decrypted file to disk (default behaviour).
+    VIEW_ONLY – recipient may only view the content in-browser; the backend will reject
+                any direct download API call and the frontend shows a restricted viewer.
+    """
+    DOWNLOAD = "download"
+    VIEW_ONLY = "view_only"
 
 def generate_uuid():
     return str(uuid.uuid4())
@@ -44,6 +56,15 @@ class ShareLink(Base):
     owner_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     token_hash = Column(String(64), unique=True, nullable=False, index=True)
     expires_at = Column(DateTime(timezone=True), nullable=True)
+    # access_mode controls how recipients may interact with the shared file.
+    # "download"  – recipient may download the decrypted file (legacy default).
+    # "view_only" – backend rejects the download endpoint; frontend uses restricted viewer.
+    access_mode = Column(
+        String(20),
+        nullable=False,
+        default=AccessMode.DOWNLOAD.value,
+        server_default=AccessMode.DOWNLOAD.value,
+    )
     max_downloads = Column(Integer, default=5)
     download_count = Column(Integer, default=0)
     password_hash = Column(String(255), nullable=True)
@@ -62,7 +83,7 @@ class AccessLog(Base):
     share_id = Column(String(36), ForeignKey("shares.id", ondelete="CASCADE"), nullable=True)
     file_id = Column(String(36), ForeignKey("files.id", ondelete="CASCADE"), nullable=True)
     owner_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    event = Column(String(50), nullable=False)  # LINK_CREATED, ACCESS_ATTEMPT, ACCESS_GRANTED, ACCESS_DENIED, PASSWORD_FAILED, FILE_DOWNLOADED, LINK_EXPIRED, LINK_REVOKED
+    event = Column(String(50), nullable=False)  # LINK_CREATED, ACCESS_ATTEMPT, ACCESS_GRANTED, ACCESS_DENIED, PASSWORD_FAILED, FILE_DOWNLOADED, FILE_VIEWED, VIEW_STARTED, VIEW_COMPLETED, PRINT_BLOCKED, DOWNLOAD_BLOCKED, SAVE_ATTEMPT_BLOCKED, LINK_EXPIRED, LINK_REVOKED
     status = Column(String(20), nullable=False) # SUCCESS, DENIED, FAILED
     user_agent = Column(String(512), nullable=True)
     ip_address = Column(String(100), nullable=True)

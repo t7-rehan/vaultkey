@@ -1,0 +1,162 @@
+{
+  "pbtResults": {
+    "1. Write bug condition exploration test": {
+      "status": "passed",
+      "failingExample": "4 exploration tests failed as expected on unfixed code, confirming the bug:\n\n1. \"PDF path renders via <canvas> (PDF.js), not <iframe>\" → FAILED: pdfBranchHasCanvas returned false (expected true). No <canvas> found in the isPdfMime branch — the bug condition is confirmed: no PDF.js renderer exists.\n\n2. \"PDF path does NOT use <iframe>\" → FAILED: pdfBranchHasIframe returned true (expected false). The <iframe src={blobUrl}#toolbar=0...> is present in the PDF branch — browsers silently fail to display blob-URL-sourced PDFs inside iframes.\n\n3. \"PdfViewer sub-component exists\" → FAILED: hasPdfViewerComponent returned false (expected true). No PdfViewer canvas-based renderer component exists in ViewOnlyViewer.jsx.\n\n4. \"PDF rendering path shows error message on failure (not silent)\" → FAILED: pdfBranchHasErrorMessage returned false (expected true). No error handling exists in the PDF branch — confirming requirement 1.3: silent failure with blank viewer and no user message.\n\n3 baseline predicate tests PASSED (isPdfMime exists, scoped to 'application/pdf', used in renderContent). These confirm the predicate logic is correct and the dispatch path is wired up — the bug is exclusively in the rendering strategy used (iframe vs canvas).",
+      "lastRunTimestamp": 1788856352370
+    },
+    "2. Write preservation property tests (BEFORE implementing fix)": {
+      "status": "passed",
+      "lastRunTimestamp": 1788857368899
+    },
+    "3.4 Verify bug condition exploration test now passes": {
+      "status": "passed",
+      "lastRunTimestamp": 1788858398176
+    }
+  },
+  "executionHistory": {
+    "1. Write bug condition exploration test": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855870206
+      },
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855880540
+      },
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788856383327
+      }
+    ],
+    "2. Write preservation property tests (BEFORE implementing fix)": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855870655
+      },
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788856388620
+      },
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788857389707
+      }
+    ],
+    "3.1 Add `pdfjs-dist` dependency to `frontend/package.json`": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855870811
+      },
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788857394466
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788857755506
+      }
+    ],
+    "3.2 Introduce `PdfViewer` sub-component in `ViewOnlyViewer.jsx`": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855870911
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788857760967
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788857874205
+      }
+    ],
+    "3.3 Replace the iframe branch in `renderContent()` with `<PdfViewer>`": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855870984
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788857878442
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788858017585
+      }
+    ],
+    "3.4 Verify bug condition exploration test now passes": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855871074
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788858021945
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788858414383
+      }
+    ],
+    "3.5 Verify preservation tests still pass": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855871139
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788858420261
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788858657069
+      }
+    ],
+    "4. Checkpoint — Ensure all tests pass": [
+      {
+        "executionId": "5bb14dda-5492-4b41-bdae-002e1f225188",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788855871209
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788858662796
+      },
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788859318191
+      }
+    ],
+    "3. Fix: Replace iframe PDF rendering with PDF.js canvas renderer": [
+      {
+        "executionId": "3dd039e8-d751-4b8b-894d-3ba5ff3b2ff3",
+        "chatSessionId": "sess_864fefc2-0802-4000-8279-12a4fea672f9",
+        "timestamp": 1788858657136
+      }
+    ]
+  }
+}

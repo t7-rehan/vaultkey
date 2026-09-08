@@ -1,6 +1,6 @@
 import { request } from './api';
 
-export async function createShareLink(fileId, expirationHours, maxDownloads, password) {
+export async function createShareLink(fileId, expirationHours, maxDownloads, password, accessMode = 'download') {
   return await request('/shares', {
     method: 'POST',
     body: JSON.stringify({
@@ -8,6 +8,7 @@ export async function createShareLink(fileId, expirationHours, maxDownloads, pas
       expiration_hours: expirationHours,
       max_downloads: maxDownloads,
       password: password || null,
+      access_mode: accessMode,
     }),
   });
 }

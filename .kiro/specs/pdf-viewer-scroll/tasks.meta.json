@@ -1,0 +1,128 @@
+{
+  "pbtResults": {
+    "1. Write bug condition exploration test": {
+      "status": "passed",
+      "failingExample": "7 tests failed as expected on unfixed code, confirming the bug condition:\n\nCOUNTEREXAMPLE 1 — isBugCondition is true for application/pdf:\n  isBugCondition('application/pdf', SOURCE) === true\n  → contentAreaWrapper has class 'overflow-hidden'; PdfViewer's scroll is fully suppressed\n\nCOUNTEREXAMPLE 2 — Content area wrapper className:\n  \"flex-1 overflow-hidden relative\"\n  → overflow-hidden suppresses PdfViewer scroll container; scrollTop stays 0 after any scroll attempt\n\nCOUNTEREXAMPLE 3 — Content area wrapper has no overflow-auto:\n  contentAreaHasOverflowAuto === false\n  → scroll is impossible regardless of PdfViewer's own overflow-auto CSS\n\nCOUNTEREXAMPLE 4 — CanvasPage wrapper className:\n  \"w-full rounded shadow-lg overflow-hidden\"\n  → overflow-hidden clips canvas pixel data; wrapper offsetHeight < canvas offsetHeight for tall pages\n\nCOUNTEREXAMPLE 5 — Scroll behavior is 'blocked':\n  inferScrollBehavior === 'blocked'\n  → scrollTop remains 0 after any scroll attempt due to overflow-hidden on parent\n\nCOUNTEREXAMPLE 6 — Canvas clipping is 'clipped':\n  inferCanvasClipping === 'clipped'\n  → canvas pixels beyond wrapper height are invisible; second/third pages inaccessible\n\nCOUNTEREXAMPLE 7 — Both constraints present simultaneously:\n  contentAreaHasOverflowHidden=true AND canvasPageHasOverflowHidden=true\n  → multi-page PDFs fully inaccessible; user cannot scroll to page 2, 3, ... N",
+      "lastRunTimestamp": 1788861052714
+    },
+    "2. Write preservation property tests (BEFORE implementing fix)": {
+      "status": "passed",
+      "lastRunTimestamp": 1788862256258
+    },
+    "3.2 Verify bug condition exploration test now passes": {
+      "status": "passed",
+      "lastRunTimestamp": 1788862930404
+    }
+  },
+  "executionHistory": {
+    "1. Write bug condition exploration test": [
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788860823159
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788860833511
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788861071595
+      }
+    ],
+    "2. Write preservation property tests (BEFORE implementing fix)": [
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788860823203
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788861076705
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788862275335
+      }
+    ],
+    "3.1 Implement the fix in ViewOnlyViewer.jsx": [
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788860823249
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788862280748
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788862326912
+      }
+    ],
+    "3.2 Verify bug condition exploration test now passes": [
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788860823304
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788862332200
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788862947871
+      }
+    ],
+    "3.3 Verify preservation tests still pass": [
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788860823358
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788862953311
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788863051416
+      }
+    ],
+    "4. Checkpoint — Ensure all tests pass": [
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788860823396
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788863057259
+      },
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788863986351
+      }
+    ],
+    "3. Fix for PDF viewer scroll clipping bug": [
+      {
+        "executionId": "2bb306ae-4fc5-4607-9176-b669d10ab6e7",
+        "chatSessionId": "sess_4ee4320a-c81f-4c85-ae39-0124b1c89d47",
+        "timestamp": 1788863051457
+      }
+    ]
+  }
+}
